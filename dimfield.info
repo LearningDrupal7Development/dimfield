@@ -1,0 +1,5 @@
+name = Dimensions field
+description = A Field offering height, width, and depth
+package = Drupal 7 Development
+core = 7.x
+files[] = dimfield.module

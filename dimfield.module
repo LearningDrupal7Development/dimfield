@@ -81,7 +81,7 @@ function dimfield_field_validate($obj_type, $object, $field, $instance, $langcod
             'message' => t('%name: The %column may not be larger than %max.', array(
               '%column' => $column,
               '%name' => $instance['label'],
-              '%max' => $instance['settings'][$mak_key],
+              '%max' => $instance['settings'][$max_key],
             )),
           );
         }
@@ -173,7 +173,7 @@ function dimfield_field_instance_settings_form($field, $instance) {
  * Implements hook_widget_info().
  */
 function dimfield_field_widget_info() {
-    return array(
+  return array(
     'dimfield_simple' => array(
       'label' => t('Separate text fields'),
       'description' => t('Allow the user to enter each dimension separately.'),
@@ -229,19 +229,19 @@ function dimfield_field_widget_form(&$form, &$form_state, $field, $instance, $la
   $base = $element;
 
   if ($instance['widget']['type'] == 'dimfield_simple') {
-    $element['height'] =  array(
+    $element['height'] = array(
       '#type' => 'textfield',
       '#title' => t('Height'),
       '#default_value' => isset($items[$delta]['height']) ? $items[$delta]['height'] : NULL,
     ) + $base;
-    $element['width'] =  array(
+    $element['width'] = array(
       '#type' => 'textfield',
       '#title' => t('Width'),
       '#default_value' => isset($items[$delta]['width']) ? $items[$delta]['width'] : NULL,
     ) + $base;
 
     if ($field['settings']['num_dimensions'] == 3) {
-      $element['depth'] =  array(
+      $element['depth'] = array(
         '#type' => 'textfield',
         '#title' => t('Depth'),
         '#default_value' => isset($items[$delta]['depth']) ? $items[$delta]['depth'] : NULL,
@@ -272,6 +272,7 @@ function dimfield_field_widget_form(&$form, &$form_state, $field, $instance, $la
     $element['dimfield_combined_wrapper']['#theme'] = 'dimfield_combined_wrapper';
 
     $element['dimfield_combined_wrapper']['height_width_depth'] =  array(
+      '#title' => t('Dimensions'),
       '#type' => 'textfield',
       '#default_value' => $default,
       '#size' => $instance['widget']['settings']['size'],

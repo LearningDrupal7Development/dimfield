@@ -375,6 +375,56 @@ function dimfield_field_formatter_info() {
 }
 
 /**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function dimfield_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $summary = '';
+
+  if ($display['type'] == 'dimfield_table') {
+    if ($settings['units_as'] == 'column') {
+      $summary = t('Show units as their own column');
+    }
+    else if ($settings['units_as'] == 'header') {
+      $summary = t('Show units in column headers');
+    }
+    else if ($settings['units_as'] == 'none') {
+      $summary = t('Do not show units');
+    }
+  }
+    
+  return $summary;
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function dimfield_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $form = array();
+
+  if ($display['type'] == 'dimfield_table') {
+    $form['units_as'] = array(
+      '#title' => t('Show units'),
+      '#type' => 'select',
+      '#options' => array(
+        'column' => t('As their own column'),
+        'header' => t('In column headers'),
+        'none' => t('Do not show units'),
+      ),
+      '#default_value' => $settings['units_as'],
+      '#required' => TRUE,
+    );
+  }
+
+  return $form;
+}
+
+/**
  * Implements hook_field_formatter_view().
  */
 function dimfield_field_formatter_view($obj_type, $object, $field, $instance, $langcode, $items, $display) {
@@ -409,14 +459,28 @@ function dimfield_field_formatter_view($obj_type, $object, $field, $instance, $l
       	if ($field['settings']['num_dimensions'] == 3) {
       	  $row[] = $item['depth'];
         }
-        $row[] = dimfield_units($item['units']);
+        if ($settings['units_as'] == 'column') {
+          $row[] = dimfield_units($item['units']);
+        }
         $rows[] = $row;
       }
-      $header = array(t('Height'), t('Width'));
-      if ($field['settings']['num_dimensions'] == 3) {
-        $header[] = t('Depth');
+
+      if ($settings['units_as'] == 'header') {
+        $header = array(
+          t('Height (%units)', array('%units' => dimfield_units($item['units']))),
+          t('Width (%units)', array('%units' => dimfield_units($item['units']))),
+        );
       }
-      $header[] = t('Units');
+      else {
+        $header = array(t('Height'), t('Width'));
+      }
+
+      if ($field['settings']['num_dimensions'] == 3) {
+        $header[] = ($settings['units_as'] == 'header') ? t('Depth (%units)', array('%units' => dimfield_units($item['units']))) : t('Depth');
+      }
+      if ($settings['units_as'] == 'column') {
+        $header[] = t('Units');
+      }
 
       $element = array(
         '#theme' => 'table',

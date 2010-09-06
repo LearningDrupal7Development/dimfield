@@ -462,10 +462,30 @@ function dimfield_field_formatter_view($obj_type, $object, $field, $instance, $l
       $rows = array();
       foreach ($items as $delta => $item) {
         $row = array();
-        $row[] = ($settings['units_as'] == 'cell') ? t('@value (%units)', array('@value' => $item['height'], '%units' => dimfield_units($item['units']))) : $item['height'];
-        $row[] = ($settings['units_as'] == 'cell') ? t('@value (%units)', array('@value' => $item['width'], '%units' => dimfield_units($item['units']))) : $item['width'];
+        if ($settings['units_as'] == 'cell') {
+          $row[] = t('@value (%units)', array(
+            '@value' => $item['height'],
+            '%units' => dimfield_units($item['units']),
+          ));
+          $row[] = t('@value (%units)', array(
+            '@value' => $item['width'],
+            '%units' => dimfield_units($item['units']),
+          ));
+        }
+        else {
+          $row[] = $item['height'];
+          $row[] = $item['width'];
+        }
       	if ($field['settings']['num_dimensions'] == 3) {
-          $row[] = ($settings['units_as'] == 'cell') ? t('@value (%units)', array('@value' => $item['width'], '%units' => dimfield_units($item['units']))) : $item['width'];
+          if ($settings['units_as'] == 'cell') {
+            $row[] = t('@value (%units)', array(
+              '@value' => $item['depth'],
+              '%units' => dimfield_units($item['units']),
+            ));
+          }
+          else {
+            $row[] = $item['depth'];
+          }
         }
         if ($settings['units_as'] == 'column') {
           $row[] = dimfield_units($item['units']);

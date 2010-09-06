@@ -324,34 +324,35 @@ function _dimfield_combined_validate($element, &$form_state) {
   }
 
   $values = $form_state['values'];
-  $language = $values['language'];
+  $language = $element['#language'];
   $field_name = $element['#field_name'];
+  $item = $values[$field_name][$language][$element['#delta']]['dimfield_combined_wrapper'];
 
   $num_dimensions = 2;
   if (array_search('depth', $element['#columns'])) {
   	$num_dimensions = 3;
   }
 
-  foreach ($values[$field_name][$language] as $delta => $item) {
-    if (substr_count($item['dimfield_combined_wrapper']['height_width_depth'], 'x') == $num_dimensions - 1) {
-    	if ($num_dimensions == 2) {
-	      list($height, $width) = explode('x', $item['dimfield_combined_wrapper']['height_width_depth']);
-	      $new_values = array(
-	        'height' => trim($height),
-	        'width' => trim($width),
-          'units' => $item['dimfield_combined_wrapper']['units'],
+  // If there was nothing entered, we assume it to be an empty record and ignore it.
+  if (trim($item['height_width_depth'])) {
+    if (substr_count($item['height_width_depth'], 'x') == $num_dimensions - 1) {
+      if ($num_dimensions == 2) {
+        list($height, $width) = explode('x', $item['height_width_depth']);
+        $new_values = array(
+          'height' => trim($height),
+          'width' => trim($width),
+          'units' => $item['units'],
         );
       }
       elseif ($num_dimensions == 3) {
-        list($height, $width, $depth) = explode('x', $item['dimfield_combined_wrapper']['height_width_depth']);
+        list($height, $width, $depth) = explode('x', $item['height_width_depth']);
         $new_values = array(
           'height' => trim($height),
           'width' => trim($width),
           'depth' => trim($depth),
-          'units' => $item['dimfield_combined_wrapper']['units'],
+          'units' => $item['units'],
         );
       }
-
       form_set_value($element, $new_values, $form_state);
     }
     else {

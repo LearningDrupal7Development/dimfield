@@ -300,6 +300,11 @@ function dimfield_theme() {
   );
 }
 
+/**
+ * Theme function for the combined_wrapper widget.
+ *
+ * @ingroup themeable
+ */
 function theme_dimfield_combined_wrapper($variables) {
 	$element = $variables['element'];
 

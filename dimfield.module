@@ -253,7 +253,7 @@ function dimfield_field_widget_form(&$form, &$form_state, $field, $instance, $la
       '#title' => t('Units'),
       '#default_value' => isset($items[$delta]['units']) ? $items[$delta]['units'] : NULL,
       '#options' => dimfield_units(),
-    );
+    ) + $base;
   }
   elseif ($instance['widget']['type'] == 'dimfield_combined') {
     $element['#element_validate'] = array('_dimfield_combined_validate');
@@ -283,7 +283,7 @@ function dimfield_field_widget_form(&$form, &$form_state, $field, $instance, $la
       '#title' => t('Units'),
       '#default_value' => isset($items[$delta]['units']) ? $items[$delta]['units'] : NULL,
       '#options' => dimfield_units(),
-    );
+    ) + $base;
   }
 
   return $element;
@@ -369,6 +369,7 @@ function dimfield_field_formatter_info() {
     'dimfield_table' => array(
       'label' => t('Show as table'),
       'field types' => array('dimensions'),
+      'settings' => array('units_as' => 'column'),
     ),
   );
 }

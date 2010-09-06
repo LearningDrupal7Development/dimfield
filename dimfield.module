@@ -393,8 +393,8 @@ function dimfield_field_formatter_settings_summary($field, $instance, $view_mode
     if ($settings['units_as'] == 'column') {
       $summary = t('Show units as their own column');
     }
-    else if ($settings['units_as'] == 'header') {
-      $summary = t('Show units in column headers');
+    else if ($settings['units_as'] == 'cell') {
+      $summary = t('Show units in each cell');
     }
     else if ($settings['units_as'] == 'none') {
       $summary = t('Do not show units');
@@ -419,7 +419,7 @@ function dimfield_field_formatter_settings_form($field, $instance, $view_mode, $
       '#type' => 'select',
       '#options' => array(
         'column' => t('As their own column'),
-        'header' => t('In column headers'),
+        'cell' => t('In each cell'),
         'none' => t('Do not show units'),
       ),
       '#default_value' => $settings['units_as'],
@@ -461,9 +461,11 @@ function dimfield_field_formatter_view($obj_type, $object, $field, $instance, $l
     case 'dimfield_table':
       $rows = array();
       foreach ($items as $delta => $item) {
-      	$row = array($item['height'], $item['width']);
+        $row = array();
+        $row[] = ($settings['units_as'] == 'cell') ? t('@value (%units)', array('@value' => $item['height'], '%units' => dimfield_units($item['units']))) : $item['height'];
+        $row[] = ($settings['units_as'] == 'cell') ? t('@value (%units)', array('@value' => $item['width'], '%units' => dimfield_units($item['units']))) : $item['width'];
       	if ($field['settings']['num_dimensions'] == 3) {
-      	  $row[] = $item['depth'];
+          $row[] = ($settings['units_as'] == 'cell') ? t('@value (%units)', array('@value' => $item['width'], '%units' => dimfield_units($item['units']))) : $item['width'];
         }
         if ($settings['units_as'] == 'column') {
           $row[] = dimfield_units($item['units']);
@@ -471,18 +473,9 @@ function dimfield_field_formatter_view($obj_type, $object, $field, $instance, $l
         $rows[] = $row;
       }
 
-      if ($settings['units_as'] == 'header') {
-        $header = array(
-          t('Height (%units)', array('%units' => dimfield_units($item['units']))),
-          t('Width (%units)', array('%units' => dimfield_units($item['units']))),
-        );
-      }
-      else {
-        $header = array(t('Height'), t('Width'));
-      }
-
+      $header = array(t('Height'), t('Width'));
       if ($field['settings']['num_dimensions'] == 3) {
-        $header[] = ($settings['units_as'] == 'header') ? t('Depth (%units)', array('%units' => dimfield_units($item['units']))) : t('Depth');
+        $header[] = t('Depth');
       }
       if ($settings['units_as'] == 'column') {
         $header[] = t('Units');

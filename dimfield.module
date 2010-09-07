@@ -272,7 +272,7 @@ function dimfield_field_widget_form(&$form, &$form_state, $field, $instance, $la
     $element['dimfield_combined_wrapper']['#theme'] = 'dimfield_combined_wrapper';
 
     $element['dimfield_combined_wrapper']['height_width_depth'] =  array(
-      '#title' => t('Dimensions, separated by x'),
+      '#title' => t('Dimensions (separated by x)'),
       '#type' => 'textfield',
       '#default_value' => $default,
       '#size' => $instance['widget']['settings']['size'],
